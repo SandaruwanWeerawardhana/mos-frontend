@@ -110,10 +110,11 @@ ul {
 /* ================================= Place Oder =========================================== */
 
 .cartBox{
+  padding-top : 80px;
   align-content: center;
   background-color: #ffffff;
   width: 500px;
-  height: 250px; 
+  height: 1000px; 
   max-height: 100px;
   overflow-y: auto;
 

@@ -1,4 +1,3 @@
-
 let items = [
   {
     itemCode: "B1001",
@@ -169,212 +168,69 @@ let items = [
     img: "https://poshjournal.com/wp-content/uploads/2021/02/thai-bbq-chicken-wings-8.jpg",
   },
 ];
-document
-  .getElementById("itemForm")
-  .addEventListener("submit", function (event) {
-    event.preventDefault();
-    OderPlace();
-  });
 
-// View Items
+function loadTable() {
+  fetch("http://localhost:8080/mos/order/get-all", {
+    method: "GET",
+    redirect: "follow",
+  })
+    .then((response) => response.json())
+    .then((result) => {
+      let tblBody = document.getElementById("PlacedTable");
+      let body = "";
 
-let tblBody = document.getElementById("OderBody");
-let body = ``;
-items.forEach((element, index) => {
-  body += `
-        <tr>
-          <td>${element.itemCode}</td>
-          <td>${element.itemName}</td>
-        
-          <td>Rs.${element.price}</td>
-          <td><img src="${element.img}" alt="${element.itemName}" class="item-image" style="height: 50px;"></td>
-          <td>
-        <button class="btn btn-sm btn-outline-primary" onclick="addCart(${index})">Add Cart</button>
-             
-              </td>
-              </tr>    
-    `;
-});
-tblBody.innerHTML = body;
+      result.forEach((element) => {
+        body += `
+          <tr>
+            <td>${element.customerName}</td>
+            <td>${element.contact}</td>
+            <td>${element.itemID}</td>
+            <td>${element.qty}</td>
+            <td>Rs ${element.price}/=</td>
+            <td>${element.discount}%</td>
+            <td>Rs ${element.totPrice.toFixed(2)}/=</td>
+            <td>
+              <button class="btn btn-sm btn-primary" onclick="printBill(${
+                element.orderID
+              })">Print</button>
+              <button class="btn btn-sm btn-outline-danger" onclick="deleteItem(${
+                element.orderID
+              })">🗑️</button>
+            </td>
+          </tr>    
+        `;
+      });
 
-// add cart
-let CartArray = [];
+      tblBody.innerHTML = body;
+      console.log(result);
+    })
+    .catch((error) => console.log("Error fetching data:", error));
+}
+loadTable();
 
-function addCart(index) {
-  const selectItem = items[index];
-  const existingItem = CartArray.find(
-    (item) => item.Code === selectItem.itemCode
-  );
+//  delete Customer
+function deleteItem(index) {
+  const requestOptions = {
+    method: "DELETE",
+    redirect: "follow",
+  };
 
-  if (existingItem) {
-    existingItem.qty += 1;
-  } else {
-    CartArray.push({
-      Code: selectItem.itemCode,
-      Name: selectItem.itemName,
-      Price: selectItem.price,
-      img: selectItem.img,
-      qty: 1,
+  fetch(`http://localhost:8080/mos/order/delete/${index}`, requestOptions)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      return response.text();
+    })
+    .then((result) => {
+      console.log(result);
+      loadTable();
+    })
+    .catch((error) => {
+      console.error("Error deleting customer:", error);
     });
-  }
-
-  displayCart();
 }
 
-// Display Cart
-function displayCart() {
-  const AddCart = document.getElementById("cartboxId");
-  let TempAddCart = ``;
-
-  CartArray.forEach((element, index) => {
-    TempAddCart += `
-      <tr>
-        <td>${element.Code}</td>
-        <td>${element.Name}</td>
-        <td>Rs.${element.Price}</td>
-        <td><img src="${element.img}" alt="${element.Name}" class="item-image" style="width: 50px; height: auto;"></td>
-        <td>${element.qty}</td>
-        <td>
-          <button class="btn btn-sm btn-outline-danger" onclick="removeCartItem(${index})">🗑️</button>
-        </td>
-      </tr>
-    `;
-  });
-
-  AddCart.innerHTML = TempAddCart;
-}
-
-// Remove  Cart
-function removeCartItem(index) {
-  CartArray.splice(index, 1);
-  displayCart();
-}
-
-// oder place
-
-let Oderarray = [];
-
-function OderPlace() {
-  const name = document.getElementById("name").value;
-  const number = document.getElementById("contact").value;
-  const discount = parseFloat(document.getElementById("discount").value || 0);
-
-  if (!name || !number || isNaN(discount)) {
-    alert("Please fill out all fields correctly.");
-    return;
-  }
-
-  let total = 0;
-  CartArray.forEach((item) => {
-    total += item.Price * item.qty;
-  });
-
-  const discountedTotal =discount !== 0 ? total - total * (discount / 100) : total;
-
-  Oderarray.push({
-    Name: name,
-    Number: number,
-    Items: CartArray,
-    Discount: discount,
-    Total: discountedTotal,
-  });
-
-  let tableInner = document.getElementById("PlacedTable");
-  tableInner.innerHTML = "";
-
-  Oderarray.forEach((order) => {
-    let row = document.createElement("tr");
-
-    let nameCell = document.createElement("td");
-    nameCell.textContent = order.Name;
-    row.appendChild(nameCell);
-
-    let numberCell = document.createElement("td");
-    numberCell.textContent = order.Number;
-    row.appendChild(numberCell);
-
-    let itemNameCell = document.createElement("td");
-    order.Items.forEach((item) => {
-      let itemName = document.createElement("h6");
-      itemName.textContent = item.Name;
-      itemNameCell.appendChild(itemName);
-    });
-    row.appendChild(itemNameCell);
-
-    let qtyCell = document.createElement("td");
-    order.Items.forEach((item) => {
-      let qty = document.createElement("h6");
-      qty.textContent = item.qty;
-      qtyCell.appendChild(qty);
-    });
-    row.appendChild(qtyCell);
-
-    let priceCell = document.createElement("td");
-    order.Items.forEach((item) => {
-      let price = document.createElement("h6");
-      price.textContent = item.Price;
-      priceCell.appendChild(price);
-    });
-    row.appendChild(priceCell);
-
-    let discountCell = document.createElement("td");
-    discountCell.textContent = order.Discount;
-    row.appendChild(discountCell);
-
-    let totalCell = document.createElement("td");
-    totalCell.textContent = order.Total;
-    row.appendChild(totalCell);
-
-    let actionCell = document.createElement("td");
-    let printButton = document.createElement("button");
-    printButton.textContent = "Print Bill";
-    printButton.className = "btn btn-sm btn btn-outline-primary";
-    printButton.onclick = () => printBill(order); // Attach the function call
-    actionCell.appendChild(printButton);
-    row.appendChild(actionCell);
-
-    tableInner.appendChild(row);
-  });
-
-  // Clear the cart
-  CartArray = [];
-  displayCart();
-
-  // Reset the form fields
-  document.getElementById("name").value = "";
-  document.getElementById("contact").value = "";
-  document.getElementById("discount").value = "";
-
-  alert("Order placed successfully!");
-}
-
-// Search the table 
-let searchInput = document.getElementById("searchInput");
-searchInput.addEventListener("keyup", search);
-
-function search(){
-  const query = searchInput.value.toLowerCase();
-  const filteredItems = items.filter((item) =>
-    item.itemName.toLowerCase().includes(query) 
-  );
-
-  let body = ``;
-  filteredItems.forEach((element, index) => {
-    body += `
-      <tr>
-        <td>${element.itemCode}</td>
-        <td>${element.itemName}</td>
-        <td>Rs.${element.price}</td>
-        <td><img src="${element.img}" alt="${element.itemName}" class="item-image" style="height: 50px;"></td>
-        <td>
-          <button class="btn btn-sm btn-outline-primary" onclick="addCart(${index})">Add Cart</button>
-        </td>
-      </tr>
-    `;
-  });
-
-  tblBody.innerHTML = body;
-}
 // print bill
 
 function printBill(order) {

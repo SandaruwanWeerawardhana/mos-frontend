@@ -1,6 +1,6 @@
 loadTable();
 function loadTable() {
-  fetch("http://localhost:8080/customer/get-all")
+  fetch("http://localhost:8080/mos/customer/get-all")
     .then((res) => res.json())
     .then((data) => {
       console.log(data);
@@ -52,7 +52,7 @@ function addCustomer() {
       redirect: "follow",
     };
 
-    fetch("http://localhost:8080/customer/add", requestOptions)
+    fetch("http://localhost:8080/mos/customer/add", requestOptions)
       .then((response) => response.text())
       .then((result) => {
         console.log(result);
@@ -84,7 +84,7 @@ function deleteCustomer(index) {
     redirect: "follow",
   };
 
-  fetch(`http://localhost:8080/customer/delete/${index}`, requestOptions)
+  fetch(`http://localhost:8080/mos/customer/delete/${index}`, requestOptions)
     .then((response) => {
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -108,7 +108,7 @@ function EditCustomer(index) {
     redirect: "follow",
   };
 
-  fetch(`http://localhost:8080/customer/search-by-id/${index}`, requestOptions)
+  fetch(`http://localhost:8080/mos/customer/search-by-id/${index}`, requestOptions)
     .then((res) => res.json())
     .then((data) => {
       console.log(data);
@@ -150,7 +150,7 @@ function updateCustomer(index) {
     redirect: "follow",
   };
 
-  fetch(`http://localhost:8080/customer/update/${index}`, requestOptions)
+  fetch(`http://localhost:8080/mos/customer/update/${index}`, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       console.log(result);

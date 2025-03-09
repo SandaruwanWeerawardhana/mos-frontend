@@ -14,34 +14,34 @@
       <div class="row gap-lg-2 mt-5 Addcards">
         <div class="col m-2 p-1 rounded-3" style="background-color: rgb(176, 147, 230);">
           <div>
-            <h1 class="fw-bold text-center">Add Item</h1>
+            <h1 class="fw-bold text-center mt-4">Add Item</h1>
           </div>
-          <form id="itemForm" method="POST" enctype="multipart/form-data">
+          <div>
             <div class="p-2 px-3 mx-4 mt-3">
               <div class="m-2">
                 Item Name:
                 <input type="text" id="ItemName" class="form-control">
               </div>
-              <div class="m-2">
+              <div class="m-2 mt-4">
                 Price:
                 <input type="text" id="ItemPrice" class="form-control">
               </div>
-              <div class="m-2">
+              <div class="m-2 mt-4">
                 <label for="Itemimage" class="form-label">Image:</label>
                 <input type="file" class="form-control" id="Itemimage" name="image" accept="image/*" required>
               </div>
-              <div class="text-center mt-3 mx-5">
-                <input class="btn btn-primary w-100" type="submit" value="Add Item" id="addButton">
+              <div class="text-center mt-5 mx-5">
+                <input class="btn btn-primary w-100" type="submit" value="Add Item" onclick="addItem()">
               </div>
             </div>
-          </form>
+          </div>
         </div>
 
         <div class="col m-2 p-1 rounded-3" style="background-color: rgb(115, 181, 114);">
           <div class="text-center">
             <h1 class="fw-bold">Item List</h1>
           </div>
-          <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search by name..." onkeyup="">
+          <input type="text" id="searchInput" class="form-control mb-3" placeholder="Search by name..." onkeyup>
           <div class="overFlowItem">
             <table class="table table-bordered table-hover text-center justify-content-center">
               <thead class="table-dark">

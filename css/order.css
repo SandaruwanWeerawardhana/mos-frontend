@@ -197,7 +197,7 @@ input[type="number"]::placeholder {
     background-color: #ffffff;
     width: 500px;
     height: 300px; 
-    max-height: 250px;
+    max-height: 280px;
     overflow-y: auto;
   
   }
