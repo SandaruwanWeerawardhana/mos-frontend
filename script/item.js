@@ -32,11 +32,14 @@ loadTable();
 
 //================Add item========================
 
-function addItem() {
+function addItemCart() {
   let itemName = document.getElementById("ItemName").value;
   let itemPrice = parseFloat(document.getElementById("ItemPrice").value);
   let itemImageInput = document.getElementById("Itemimage").files[0];
   let imageUrl = URL.createObjectURL(itemImageInput);
+
+  console.log(imageUrl);
+  
 
   if (!itemName || isNaN(itemPrice)) {
     alert("Please fill out all fields correctly.");
@@ -177,7 +180,7 @@ function updateItem(index) {
 
   let addButton = (document.getElementById("addButton").innerText =
     "Update Item");
-  addButton.onclick = addItem;
+  addButton.onclick = addItemCart;
 
 
 }

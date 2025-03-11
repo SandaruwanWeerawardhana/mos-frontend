@@ -61,7 +61,6 @@ function addCart(index) {
 
   const requestOptions = {
     method: "GET",
-    body: raw,
     redirect: "follow",
   };
 
@@ -93,41 +92,23 @@ function addCart(index) {
 }
 
 // Display Cart
-function displayCart(id) {
+function displayCart() {
   const raw = "";
 
-  const requestOptions = {
-    method: "GET",
-    body: raw,
-    redirect: "follow",
-  };
-
-  fetch(`http://localhost:8080/mos/item/${id}`, requestOptions)
-    .then((response) => response.text())
-    .then((result) => {
-      console.log(result);
-
-      const AddCart = document.getElementById("cartboxId");
-      let TempAddCart = ``;
-
-      result.forEach((element) => {
-        TempAddCart += `
-      <tr>
-        <td>${element.id}</td>
-        <td>${element.name}</td>
-        <td>Rs.${element.price}</td>
-        <td><img src="${element.image}" alt="${element.name}" class="item-image" style="width: 50px; height: auto;"></td>
-        <td>${element.CartArray.qty}</td>
-        <td>
-          <button class="btn btn-sm btn-outline-danger" onclick="removeCartItem(${index})">🗑️</button>
-        </td>
-      </tr>
-    `;
-      });
-
-      AddCart.innerHTML = TempAddCart;
-    })
-    .catch((error) => console.error(error));
+  CartArray.forEach((element) => {
+    TempAddCart += `
+  <tr>
+    <td>${element.id}</td>
+    <td>${element.name}</td>
+    <td>Rs.${element.price}</td>
+    <td><img src="${element.image}" alt="${element.name}" class="item-image" style="width: 50px; height: auto;"></td>
+    <td>${element.CartArray.qty}</td>
+    <td>
+      <button class="btn btn-sm btn-outline-danger" onclick="removeCartItem(${index})">🗑️</button>
+    </td>
+  </tr>
+`;
+  });
 }
 
 // Remove  Cart
