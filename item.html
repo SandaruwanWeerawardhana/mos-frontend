@@ -12,7 +12,7 @@
   <body class="Customer_bg">
     <div class="container justify-content-around justify-content-between">
       <div class="row gap-lg-2 mt-5 Addcards">
-        <div class="col m-2 p-1 rounded-3" style="background-color: rgb(176, 147, 230);">
+        <div class="col p-1 rounded-3" style="background-color: rgb(176, 147, 230);">
           <div>
             <h1 class="fw-bold text-center mt-4">Add Item</h1>
           </div>
@@ -27,17 +27,18 @@
                 <input type="text" id="ItemPrice" class="form-control">
               </div>
               <div class="m-2 mt-4">
-                <label for="Itemimage" class="form-label">Image:</label>
-                <input type="file" class="form-control" id="Itemimage" name="image" accept="image/*" required>
+                Image URL:
+                <input type="text" id="Itemimage" class="form-control">
               </div>
+      
               <div class="text-center mt-5 mx-5">
-                <input class="btn btn-primary w-100" type="button" value="Add Item">
+                <input class="btn btn-primary w-100" type="button" id="addButton" value="Add Item">
               </div>
             </div>
           </div>
         </div>
 
-        <div class="col m-2 p-1 rounded-3" style="background-color: rgb(115, 181, 114);">
+        <div class="col p-1 rounded-3" style="background-color: rgb(115, 181, 114);">
           <div class="text-center">
             <h1 class="fw-bold">Item List</h1>
           </div>

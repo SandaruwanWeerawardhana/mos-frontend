@@ -14,7 +14,6 @@ async function CustomerSelection() {
     });
   } catch (error) {
     console.error("Error fetching customers:", error);
-    alert("Failed to load customers. Please try again later.");
   }
 }
 window.addEventListener("DOMContentLoaded", CustomerSelection);
@@ -55,9 +54,7 @@ function loadMenu() {
 let CartArray = [];
 
 function addCart(index) {
-  console.log(index);
-
-  const raw = "";
+  console.log("Adding item to cart:", index);
 
   const requestOptions = {
     method: "GET",
@@ -65,50 +62,49 @@ function addCart(index) {
   };
 
   fetch(`http://localhost:8080/mos/item/search-by-id/${index}`, requestOptions)
-    .then((response) => response.text())
+    .then((response) => response.json())
     .then((result) => {
-      console.log(result);
+      console.log("Fetched item:", result);
 
-      const selectItem = items[index];
-      const existingItem = CartArray.find(
-        (item) => item.Code === selectItem.itemCode
-      );
+      const existingItem = CartArray.find((item) => item.Code === result.id);
 
       if (existingItem) {
         existingItem.qty += 1;
       } else {
         CartArray.push({
-          Code: selectItem.itemCode,
-          ItemID: selectItem.itemID,
-          Price: selectItem.price,
-          img: selectItem.img,
+          Code: result.id,
+          name: result.name,
+          Price: result.price,
+          img: result.image,
           qty: 1,
         });
       }
 
       displayCart();
     })
-    .catch((error) => console.error(error));
+    .catch((error) => console.error("Error fetching item:", error));
 }
 
 // Display Cart
 function displayCart() {
-  const raw = "";
+  let cartTable = document.getElementById("cartboxId");
+  let TempAddCart = "";
 
-  CartArray.forEach((element) => {
+  CartArray.forEach(element => {
     TempAddCart += `
   <tr>
-    <td>${element.id}</td>
+    <td>${element.Code}</td>
     <td>${element.name}</td>
-    <td>Rs.${element.price}</td>
-    <td><img src="${element.image}" alt="${element.name}" class="item-image" style="width: 50px; height: auto;"></td>
-    <td>${element.CartArray.qty}</td>
+    <td>Rs.${element.Price}</td>
+    <td><img src="${element.img}" alt="${element.name}" class="item-image" style="width: 50px; height: auto;"></td>
+    <td>${element.qty}</td>
     <td>
-      <button class="btn btn-sm btn-outline-danger" onclick="removeCartItem(${index})">🗑️</button>
+      <button class="btn btn-sm btn-outline-danger" onclick="removeCartItem(${CartArray.indexOf(element)})">🗑️</button>
     </td>
   </tr>
 `;
   });
+  cartTable.innerHTML = TempAddCart;
 }
 
 // Remove  Cart
@@ -146,9 +142,8 @@ function OderPlace() {
     Discount: discount,
     Total: discountedTotal,
   });
-  
 
-// 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  // 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
@@ -175,11 +170,10 @@ function OderPlace() {
       console.log(result);
 
       alert("Order placed successfully!");
-      // Clear the cart
+      // Clear the cart and fields
       CartArray = [];
       displayCart();
 
-      // Reset the form fields
       document.getElementById("name").value = "";
       document.getElementById("contact").value = "";
       document.getElementById("discount").value = "";

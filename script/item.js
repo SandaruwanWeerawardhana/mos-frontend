@@ -31,15 +31,19 @@ function loadTable() {
 loadTable();
 
 //================Add item========================
+let addButton = document.getElementById("addButton");
+addButton.innerText = "Save Changes";
 
-function addItemCart() {
+addButton.onclick = function () {
+  addItem();
+};
+
+function addItem() {
   let itemName = document.getElementById("ItemName").value;
   let itemPrice = parseFloat(document.getElementById("ItemPrice").value);
-  let itemImageInput = document.getElementById("Itemimage").files[0];
-  let imageUrl = URL.createObjectURL(itemImageInput);
+  let itemImageInput = document.getElementById("Itemimage").value;
 
-  console.log(imageUrl);
-  
+  console.log(itemImageInput);
 
   if (!itemName || isNaN(itemPrice)) {
     alert("Please fill out all fields correctly.");
@@ -52,7 +56,7 @@ function addItemCart() {
   const raw = JSON.stringify({
     name: itemName,
     price: itemPrice,
-    image: imageUrl,
+    image: itemImageInput,
   });
 
   const requestOptions = {
@@ -66,6 +70,7 @@ function addItemCart() {
     .then((response) => response.text())
     .then((result) => {
       console.log(result);
+      loadTable();
       alert("Order placed successfully!");
 
       document.getElementById("ItemName").value = "";
@@ -95,11 +100,9 @@ function deleteItem(index) {
 //===============Update item=======================
 
 function editItem(index) {
-  const raw = "";
 
   const requestOptions = {
     method: "GET",
-    body: raw,
     redirect: "follow",
   };
 
@@ -107,7 +110,7 @@ function editItem(index) {
     .then((response) => response.json())
     .then((result) => {
       console.log(result);
-
+      loadTable();
       result.forEach((el) => {
         document.getElementById("ItemName").value = el.name;
         document.getElementById("ItemPrice").value = el.price;
@@ -125,62 +128,44 @@ function editItem(index) {
 }
 
 function updateItem(index) {
-  let itemName = document.getElementById("ItemName").value.trim();
+  let itemName = document.getElementById("ItemName").value;
   let itemPrice = parseFloat(document.getElementById("ItemPrice").value);
-  let itemImageInput = document.getElementById("Itemimage").files[0];
+  let itemImageInput = document.getElementById("Itemimage").value;
 
-  if (!itemId || !itemName || isNaN(itemPrice)) {
+  if (!itemImageInput || !itemName || isNaN(itemPrice)) {
     alert("Please fill out all fields correctly.");
     return;
   }
 
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
-  
+
   const raw = JSON.stringify({
-    "name": "Dayya Burgers",
-    "price": 7800
+    name: itemName,
+    price: itemPrice,
+    image: itemImageInput
   });
-  
+
   const requestOptions = {
     method: "PUT",
     headers: myHeaders,
     body: raw,
-    redirect: "follow"
+    redirect: "follow",
   };
-  
-  fetch("http://localhost:8080/mos/item/update/11", requestOptions)
+
+  fetch(`http://localhost:8080/mos/item/update/${index}`, requestOptions)
     .then((response) => response.text())
     .then((result) => {
       console.log(result);
-      document.getElementById("ItemId").value = "";
       document.getElementById("ItemName").value = "";
       document.getElementById("ItemPrice").value = "";
       document.getElementById("Itemimage").value = "";
-    
+
       loadTable();
-
     })
-    .catch((error) => console.error(error));  
-
-
-
-  let itemImage = itemImageInput
-    ? URL.createObjectURL(itemImageInput)
-    : items[index].img;
-
-  // Update array
-  items[index] = {
-    itemCode: itemId,
-    itemName: itemName,
-    price: itemPrice,
-    discount: 0,
-    img: itemImage,
-  };
+    .catch((error) => console.error(error));
 
   let addButton = (document.getElementById("addButton").innerText =
     "Update Item");
-  addButton.onclick = addItemCart;
-
-
+  addButton.onclick = addItem;
 }

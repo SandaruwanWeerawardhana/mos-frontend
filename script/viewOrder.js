@@ -7,13 +7,6 @@ let items = [
     img: "https://images.pexels.com/photos/5554607/pexels-photo-5554607.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
   },
   {
-    itemCode: "B1002",
-    itemName: "Classic Burger",
-    price: 1500.0,
-    discount: 15,
-    img: "https://images.pexels.com/photos/1556698/pexels-photo-1556698.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1",
-  },
-  {
     itemCode: "B1003",
     itemName: "Turkey Burger",
     price: 1600.0,
@@ -179,6 +172,7 @@ function loadTable() {
       let tblBody = document.getElementById("PlacedTable");
       let body = "";
 
+
       result.forEach((element) => {
         body += `
           <tr>
@@ -233,85 +227,97 @@ function deleteItem(index) {
 
 // print bill
 
-function printBill(order) {
-  let invoiceWindow = window.open("", "_blank");
-  let invoiceContent = `
-    <html>
-    <head>
-      <title>Invoice</title>
-      <style>
-        body {
-          font-family: Arial, sans-serif;
-          margin: 20px;
-          line-height: 1.6;
-        }
-        h1, h3, h4 {
-          text-align: center;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin: 20px 0;
-        }
-        table, th, td {
-          border: 1px solid black;
-        }
-        th, td {
-          padding: 10px;
-          text-align: left;
-        }
-        .total {
-          text-align: right;
-        }
-        .footer {
-          margin-top: 20px;
-          text-align: center;
-        }
-      </style>
-    </head>
-    <body style="background-color: rgb(114, 117, 181)">
-    <div class="text-center justify-content-around"><img src="Asset/LogoBg remove.png" alt="" srcset=""></div>
-      <h3>Details</h3>
-      <p><strong>Name:</strong> ${order.Name}</p>
-      <p><strong>Contact:</strong> ${order.Number}</p>
 
-      <h3>Order Details</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Item Name</th>
-            <th>Quantity</th>
-            <th>Unit Price (Rs.)</th>
-            <th>Total (Rs.)</th>
-          </tr>
-        </thead>
-        <tbody>
-          ${order.Items.map(
-            (item) => `
-            <tr>
-              <td>${item.Name}</td>
-              <td>${item.qty}</td>
-              <td>${item.Price.toFixed(2)}</td>
-              <td>${(item.Price * item.qty).toFixed(2)}</td>
-            </tr>
-          `
-          ).join("")}
-        </tbody>
-      </table>
-      <p class="total"><strong>Discount:</strong> ${order.Discount}%</p>
-      <p class="total"><strong>Grand Total:</strong> Rs.${order.Total.toFixed(
-        2
-      )}</p>
+function printBill(orderID) {
+  fetch(`http://localhost:8080/mos/order/get-all-byID/${orderID}`, {
+    method: "GET",
+    redirect: "follow",
+  })
+    .then((response) => response.json())
+    .then((order) => {
+      console.log(order);
+      
+      const printContent = `
+        <html>
+          <head>
+            <title>Bill - Order #${orderID}</title>
+            <style>
+              body { font-family: Arial, sans-serif; margin: 20px; }
+              .bill-header { text-align: center; margin-bottom: 20px; }
+              .bill-details { margin-bottom: 15px; }
+              .bill-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+              .bill-table th, .bill-table td { border: 1px solid #ddd; padding: 8px; }
+              .text-right { text-align: right; }
+              .total-row { font-weight: bold; }
+              @media print {
+                body { margin: 0; padding: 20px; }
+                .no-print { display: none !important; }
+              }
+            </style>
+          </head>
+          <body>
+            <div class="bill-header">
+              <h2>Mos Burger Shop</h2>
+              <p>324/01, Panadura, Colombo<br>Panadura, Sri Lanka</p>
+            </div>
 
-      <div class="footer">
-        <h4>Thank you for your purchase!</h4>
-        <p>We hope to serve you again soon.</p>
-      </div>
-    </body>
-    </html>
-  `;
+            <div class="bill-details">
+              <p><strong>Order ID:</strong> #${orderID}</p>
+              <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
+              <p><strong>Customer Name:</strong> ${order.customerName}</p>
+              <p><strong>Contact:</strong> ${order.contact}</p>
+            </div>
 
-  invoiceWindow.document.write(invoiceContent);
-  invoiceWindow.document.close();
-  invoiceWindow.print();
+            <table class="bill-table">
+              <thead>
+                <tr>
+                  <th>Item ID</th>
+                  <th>Quantity</th>
+                  <th>Unit Price</th>
+                  <th>Total</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>${order.itemID}</td>
+                  <td>${order.qty}</td>
+                  <td>Rs ${order.price}</td>
+                  <td>Rs ${(order.qty * order.price)}</td>
+                </tr>
+                <tr class="total-row">
+                  <td colspan="3" class="text-right">Subtotal:</td>
+                  <td>Rs ${order.totPrice}</td>
+                </tr>
+                <tr class="total-row">
+                  <td colspan="3" class="text-right">Discount (${order.discount}%):</td>
+                  <td>Rs ${(order.totPrice * order.discount / 100)}</td>
+                </tr>
+                <tr class="total-row">
+                  <td colspan="3" class="text-right">Grand Total:</td>
+                  <td>Rs ${(order.totPrice - (order.totPrice * order.discount / 100))}</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style="margin-top: 30px; text-align: center;">
+              <p>Thank you for your business!</p>
+              <button class="no-print" onclick="window.print()">Print Bill</button>
+              <button class="no-print" onclick="window.close()">Close</button>
+            </div>
+          </body>
+        </html>
+      `;
+
+      // Open print window
+      const printWindow = window.open('', '_blank');
+      printWindow.document.open();
+      printWindow.document.write(printContent);
+      printWindow.document.close();
+      
+      // Automatically trigger print dialog
+      printWindow.focus();
+      printWindow.print();
+      printWindow.close();
+    })
+    .catch((error) => console.log("Error fetching order details:", error));
 }
