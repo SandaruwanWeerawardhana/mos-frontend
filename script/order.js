@@ -54,35 +54,43 @@ function loadMenu() {
 let CartArray = [];
 
 function addCart(index) {
-  console.log("Adding item to cart:", index);
-
   const requestOptions = {
     method: "GET",
     redirect: "follow",
   };
 
-  fetch(`http://localhost:8080/mos/item/search-by-id/${index}`, requestOptions)
-    .then((response) => response.json())
-    .then((result) => {
-      console.log("Fetched item:", result);
+  let isExist = true;
 
-      const existingItem = CartArray.find((item) => item.Code === result.id);
-
-      if (existingItem) {
-        existingItem.qty += 1;
-      } else {
-        CartArray.push({
-          Code: result.id,
-          name: result.name,
-          Price: result.price,
-          img: result.image,
-          qty: 1,
-        });
-      }
-
+  CartArray.forEach((item) => {
+    if (item.id === index) {
+      item.qty++;
+      isExist = false;
       displayCart();
-    })
-    .catch((error) => console.error("Error fetching item:", error));
+    }
+  });
+  console.log(CartArray);
+
+  if (isExist) {
+    async function fetchData() {
+      const data = await fetch(
+        `http://localhost:8080/mos/item/search-by-id/${index}`
+      );
+
+      const result = await data.json();
+
+      const resultObj = {
+        id: result[0].id,
+        name: result[0].name,
+        price: result[0].price,
+        image: result[0].image,
+        qty: 1,
+      };
+      CartArray.push(resultObj);
+      displayCart();
+      console.log(CartArray);
+    }
+    fetchData();
+  }
 }
 
 // Display Cart
@@ -90,16 +98,20 @@ function displayCart() {
   let cartTable = document.getElementById("cartboxId");
   let TempAddCart = "";
 
-  CartArray.forEach(element => {
+  CartArray.forEach((element) => {
     TempAddCart += `
   <tr>
-    <td>${element.Code}</td>
+    <td>${element.id}</td>
     <td>${element.name}</td>
-    <td>Rs.${element.Price}</td>
-    <td><img src="${element.img}" alt="${element.name}" class="item-image" style="width: 50px; height: auto;"></td>
+    <td>Rs.${element.price}</td>
+    <td><img src="${element.image}" alt="${
+      element.name
+    }" class="item-image" style="width: 50px; height: auto;"></td>
     <td>${element.qty}</td>
     <td>
-      <button class="btn btn-sm btn-outline-danger" onclick="removeCartItem(${CartArray.indexOf(element)})">🗑️</button>
+      <button class="btn btn-sm btn-outline-danger" onclick="removeCartItem(${CartArray.indexOf(
+        element
+      )})">🗑️</button>
     </td>
   </tr>
 `;
@@ -113,48 +125,68 @@ function removeCartItem(index) {
   displayCart();
 }
 
-// oder place
+// order place
 
 let Oderarray = [];
 
 function OderPlace() {
   const name = document.getElementById("existingCustomer").value;
-  const number = document.getElementById("contact").value;
   const discount = parseFloat(document.getElementById("discount").value || 0);
 
-  if (!name || !number || isNaN(discount)) {
+  if (!name || isNaN(discount)) {
     alert("Please fill out all fields correctly.");
     return;
   }
 
-  let total = 0;
+  const tempItem = [];
+
   CartArray.forEach((item) => {
-    total += item.Price * item.qty;
+    tempItem.push({
+      id: item.id,
+      qty: item.qty,
+      price: item.price,
+    });
+  });
+
+  let total = 0;
+
+  CartArray.forEach((item) => {
+    total += item.price * item.qty;
   });
 
   const discountedTotal =
     discount !== 0 ? total - total * (discount / 100) : total;
 
-  Oderarray.push({
-    Name: name,
-    Number: number,
-    Items: CartArray,
-    Discount: discount,
-    Total: discountedTotal,
+
+  let date = new Date();
+  let month = String(date.getMonth() + 1).padStart(2, "0");
+  let day = String(date.getDate()).padStart(2, "0");
+  let orderdate = date.getFullYear() + "-" + month + "-" + day;
+
+  let orderDetail = [];
+
+  CartArray.forEach((element) => {
+    orderDetail.push({
+      orderDetailID:1,
+      order:null,
+      itemID: element.id,
+      qty: element.qty,
+      unitPrice: element.price,
+      
+    });
+    console.log(element.orderDetail);
   });
 
-  // 0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  // =========================================================================================================================
 
   const myHeaders = new Headers();
   myHeaders.append("Content-Type", "application/json");
 
   const raw = JSON.stringify({
-    customerName: name,
-    contact: number,
-    itemID: 1,
-    qty: 6,
-    price: 4500,
-    discount: discount,
+    cusID: name,
+    total: discountedTotal,
+    date: orderdate,
+    orderDetail: orderDetail,
   });
 
   const requestOptions = {
@@ -170,12 +202,10 @@ function OderPlace() {
       console.log(result);
 
       alert("Order placed successfully!");
-      // Clear the cart and fields
       CartArray = [];
       displayCart();
 
-      document.getElementById("name").value = "";
-      document.getElementById("contact").value = "";
+      document.getElementById("existingCustomer").value = "";
       document.getElementById("discount").value = "";
     })
     .catch((error) => console.error(error));
