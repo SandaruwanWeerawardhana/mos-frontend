@@ -176,13 +176,10 @@ function loadTable() {
       result.forEach((element) => {
         body += `
           <tr>
-            <td>${element.customerName}</td>
-            <td>${element.contact}</td>
-            <td>${element.itemID}</td>
-            <td>${element.qty}</td>
-            <td>Rs ${element.price}/=</td>
-            <td>${element.discount}%</td>
-            <td>Rs ${element.totPrice.toFixed(2)}/=</td>
+            <td>${element.orderID}</td>
+            <td>${element.cusID}</td>
+            <td>${element.total}</td>
+            <td>${element.date}</td>
             <td>
               <button class="btn btn-sm btn-primary" onclick="printBill(${
                 element.orderID
@@ -264,10 +261,6 @@ function printBill(orderID) {
             <div class="bill-details">
               <p><strong>Order ID:</strong> #${orderID}</p>
               <p><strong>Date:</strong> ${new Date().toLocaleDateString()}</p>
-              <p><strong>Customer Name:</strong> ${order.customerName}</p>
-              <p><strong>Contact:</strong> ${order.contact}</p>
-            </div>
-
             <table class="bill-table">
               <thead>
                 <tr>
