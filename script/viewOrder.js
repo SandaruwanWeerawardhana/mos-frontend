@@ -237,7 +237,6 @@ function printBill(orderID) {
       const printContent = `
         <html>
           <head>
-            <title>Bill - Order #${orderID}</title>
             <style>
               body { font-family: Arial, sans-serif; margin: 20px; }
               .bill-header { text-align: center; margin-bottom: 20px; }
@@ -264,30 +263,16 @@ function printBill(orderID) {
             <table class="bill-table">
               <thead>
                 <tr>
-                  <th>Item ID</th>
-                  <th>Quantity</th>
-                  <th>Unit Price</th>
+                  <th>Customer ID</th>
+                  <th>Date</th>
                   <th>Total</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  <td>${order.itemID}</td>
-                  <td>${order.qty}</td>
-                  <td>Rs ${order.price}</td>
-                  <td>Rs ${(order.qty * order.price)}</td>
-                </tr>
-                <tr class="total-row">
-                  <td colspan="3" class="text-right">Subtotal:</td>
-                  <td>Rs ${order.totPrice}</td>
-                </tr>
-                <tr class="total-row">
-                  <td colspan="3" class="text-right">Discount (${order.discount}%):</td>
-                  <td>Rs ${(order.totPrice * order.discount / 100)}</td>
-                </tr>
-                <tr class="total-row">
-                  <td colspan="3" class="text-right">Grand Total:</td>
-                  <td>Rs ${(order.totPrice - (order.totPrice * order.discount / 100))}</td>
+                  <td>${order.cusID}</td>
+                  <td>${order.date}</td>
+                  <td>Rs ${order.total}</td>
                 </tr>
               </tbody>
             </table>

@@ -1,3 +1,4 @@
+
 loadMenu();
 
 async function CustomerSelection() {
@@ -106,7 +107,7 @@ function displayCart() {
     <td>Rs.${element.price}</td>
     <td><img src="${element.image}" alt="${
       element.name
-    }" class="item-image" style="width: 50px; height: auto;"></td>
+    }" class="item-image" style="width: 60px; height: auto;"></td>
     <td>${element.qty}</td>
     <td>
       <button class="btn btn-sm btn-outline-danger" onclick="removeCartItem(${CartArray.indexOf(
@@ -210,3 +211,14 @@ function OderPlace() {
     })
     .catch((error) => console.error(error));
 }
+
+$(document).on('click', '.order', function () {
+  let button = $(this);
+
+  if (!button.hasClass('animate')) {
+    button.addClass('animate');
+    setTimeout(() => {
+      button.removeClass('animate');
+    }, 10000);
+  }
+});
