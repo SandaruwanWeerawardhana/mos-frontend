@@ -161,3 +161,21 @@ function updateCustomer(index) {
     })
     .catch((error) => console.error(error));
 }
+
+function searchCustomer() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+  const rows = document.querySelectorAll("#myCart tr");
+
+  rows.forEach((row) => {
+    const nameCell = row.querySelectorAll("td")[1]; // 2nd column is "Name"
+
+    if (nameCell) {
+      const name = nameCell.textContent.toLowerCase();
+      if (name.includes(input)) {
+        row.style.display = ""; // Show matching row
+      } else {
+        row.style.display = "none"; // Hide non-matching row
+      }
+    }
+  });
+}

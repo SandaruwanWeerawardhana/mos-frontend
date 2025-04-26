@@ -169,3 +169,20 @@ function updateItem(index) {
     "Update Item");
   addButton.onclick = addItem;
 }
+
+function searchItem() {
+  const input = document.getElementById("searchInput").value.toLowerCase(); // Get search text and convert to lowercase
+  const rows = document.querySelectorAll("#tblBody tr"); // Get all table rows inside tbody
+
+  rows.forEach((row) => {
+    const nameCell = row.querySelectorAll("td")[1]; // 2nd column = Item Name
+    if (nameCell) {
+      const name = nameCell.textContent.toLowerCase(); // Get item name and convert to lowercase
+      if (name.includes(input)) {
+        row.style.display = ""; // Show the row if name matches
+      } else {
+        row.style.display = "none"; // Hide if not match
+      }
+    }
+  });
+}
