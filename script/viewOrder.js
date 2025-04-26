@@ -197,6 +197,7 @@ function loadTable() {
     })
     .catch((error) => console.log("Error fetching data:", error));
 }
+
 loadTable();
 
 //  delete Customer
@@ -223,7 +224,6 @@ function deleteItem(index) {
 }
 
 // print bill
-
 
 function printBill(orderID) {
   fetch(`http://localhost:8080/mos/order/get-all-byID/${orderID}`, {

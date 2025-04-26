@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reports Page</title>
+    <link rel="stylesheet" href="./css/report.css">
+  </head>
+
+  <body onload="loadItemReport()">
+    <h2 style="text-align: center">Reports</h2>
+
+    <div class="btn-group">
+      <button onclick="showReport('customer')">All Customer Report</button>
+      <button onclick="showReport('item')">All Item Report</button>
+    </div>
+
+    <!-- Customer Report Section -->
+    <div id="customerReport" class="section">
+      <input
+        type="text"
+        id="customerSearch"
+        class="search-input"
+        placeholder="Search customer..."
+        onkeyup="filterCustomerTable()"
+      />
+      <button onclick="printCustomerBill()" style="margin: 10px; padding: 5px 10px;">Print Customer Report</button>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Contact</th>
+            <th>Address</th>
+          </tr>
+        </thead>
+        <tbody id="customerBody"></tbody>
+      </table>
+    </div>
+
+    <!-- Item Report Section -->
+    <div id="itemReport" class="section">
+      <input
+        type="text"
+        id="itemSearch"
+        class="search-input"
+        placeholder="Search item..."
+        onkeyup="filterItemTable()"
+      />
+
+      <button onclick="printBill()" style="margin: 10px; padding: 5px 10px;">Print Item Report</button>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Item Name</th>
+            <th>QTY</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody id="itemBody"></tbody>
+      </table>
+    </div>
+
+    <script src="./script/report.js"></script>
+  </body>
+</html>
